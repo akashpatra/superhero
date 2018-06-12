@@ -55,6 +55,10 @@ public class SuperHeroDAO implements IDataAdapter {
     public int addCharacter(CharacterModel character) throws SQLException {
         Logger.logD(Constants.TAG, CLASS_NAME, " >> addCharacter");
 
+        if (null != getCharacter(character.getName())) {
+            deleteCharacter(character.getName());
+        }
+
         SQLiteDatabase db = superHeroDbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
