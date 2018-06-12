@@ -67,6 +67,54 @@ public class SuperHeroDAO implements IDataAdapter {
         return 0;
     }
 
+    public int deleteCharacter(String name) {
+        Logger.logD(Constants.TAG, CLASS_NAME, " >> deleteCharacter");
+
+        SQLiteDatabase db = superHeroDbHelper.getWritableDatabase();
+        String selClause = FIELD_CHARACTER_NAME + "=?";
+        return db.delete(TABLE_NAME_CHARACTER, selClause, new String[]{name});
+    }
+
+    public CharacterModel getCharacter(String name) throws SQLException {
+        Logger.logD(Constants.TAG, CLASS_NAME, " >> getCharacter");
+
+        SQLiteDatabase db = superHeroDbHelper.getReadableDatabase();
+
+        String[] projection = {
+                FIELD_CHARACTER_ID,
+                FIELD_CHARACTER_NAME,
+                FIELD_CHARACTER_DESCRIPTION,
+                FIELD_CHARACTER_THUMBNAIL,
+                FIELD_CHARACTER_IMAGE
+        };
+
+        Cursor cursor = db.query(
+                TABLE_NAME_CHARACTER,                     // The table to query
+                projection,                               // The columns to return
+                FIELD_CHARACTER_NAME + "=?",                                // The columns for the WHERE clause
+                new String[]{name},                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null
+        );
+
+        CharacterModel characterModel = null;
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                characterModel = new CharacterModel();
+                characterModel.setId(cursor.getInt(cursor.getColumnIndex(FIELD_CHARACTER_ID)));
+                characterModel.setName(cursor.getString(cursor.getColumnIndex(FIELD_CHARACTER_NAME)));
+                characterModel.setDescription(cursor.getString(cursor.getColumnIndex(FIELD_CHARACTER_DESCRIPTION)));
+                characterModel.setThumbnail(cursor.getString(cursor.getColumnIndex(FIELD_CHARACTER_THUMBNAIL)));
+                characterModel.setImage(cursor.getString(cursor.getColumnIndex(FIELD_CHARACTER_IMAGE)));
+            }
+        }
+
+        cursor.close();
+        return characterModel;
+    }
+
     @Override
     public List<CharacterModel> selectLast5Characters() throws SQLException {
         Logger.logD(Constants.TAG, CLASS_NAME, " >> selectLast5Characters");
