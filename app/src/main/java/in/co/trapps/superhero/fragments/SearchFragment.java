@@ -8,9 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import java.sql.SQLException;
+
 import in.co.trapps.superhero.R;
+import in.co.trapps.superhero.activity.MainActivity;
+import in.co.trapps.superhero.database.SuperHeroDAO;
 import in.co.trapps.superhero.logger.Logger;
 import in.co.trapps.superhero.logger.LoggerEnable;
+import in.co.trapps.superhero.mapper.Mapper;
+import in.co.trapps.superhero.model.CharacterModel;
 import in.co.trapps.superhero.model.CharactersResponse;
 import in.co.trapps.superhero.network.APIController;
 import in.co.trapps.superhero.network.RequestListener;
@@ -48,6 +54,16 @@ public class SearchFragment extends Fragment implements RequestListener<Characte
     @Override
     public void onSuccess(Response<CharactersResponse> response) {
         Logger.logD(Constants.TAG, CLASS_NAME, "Response Received");
+        CharacterModel characterModel = Mapper.mapCharacterResponseToCharacter(response.body());
+        // Store Data in Database
+        try {
+            SuperHeroDAO.with().addCharacter(characterModel);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Tell Activity to show Character
+        ((MainActivity) getActivity()).showCharacter(characterModel);
     }
 
     @Override

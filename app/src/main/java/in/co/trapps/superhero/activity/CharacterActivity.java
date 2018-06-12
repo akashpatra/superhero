@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -42,6 +43,8 @@ public class CharacterActivity extends AppCompatActivity {
 
         // get args
         CharacterModel character = (CharacterModel) getIntent().getExtras().getSerializable(ARG_CHARACTER);
+
+        ((TextView) findViewById(R.id.description)).setText(character.getDescription());
 
         ImageView image = findViewById(R.id.image);
 

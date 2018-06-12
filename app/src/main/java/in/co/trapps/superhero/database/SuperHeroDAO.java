@@ -45,7 +45,7 @@ public class SuperHeroDAO implements IDataAdapter {
 
     public static SuperHeroDAO with() {
         if (null == superHeroDAO) {
-            Logger.logD(Constants.TAG, CLASS_NAME, "Ignoring SuperHeroDAO.with() " +
+            Logger.logD(Constants.TAG, CLASS_NAME, " >> Ignoring SuperHeroDAO.with() " +
                     "invoked before SuperHeroDAO.init() called.");
         }
         return superHeroDAO;
@@ -53,6 +53,8 @@ public class SuperHeroDAO implements IDataAdapter {
 
     @Override
     public int addCharacter(CharacterModel character) throws SQLException {
+        Logger.logD(Constants.TAG, CLASS_NAME, " >> addCharacter");
+
         SQLiteDatabase db = superHeroDbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -67,6 +69,8 @@ public class SuperHeroDAO implements IDataAdapter {
 
     @Override
     public List<CharacterModel> selectLast5Characters() throws SQLException {
+        Logger.logD(Constants.TAG, CLASS_NAME, " >> selectLast5Characters");
+
         SQLiteDatabase db = superHeroDbHelper.getReadableDatabase();
 
         String[] projection = {
