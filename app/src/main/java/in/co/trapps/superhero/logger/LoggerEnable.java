@@ -18,5 +18,23 @@ public enum LoggerEnable implements ILoggerActivator {
         public boolean isEnabled() {
             return true;
         }
+    },
+    CharacterActivity {
+        @Override
+        public boolean isEnabled() {
+            return true;
+        }
+    },
+    SearchFragment {
+        @Override
+        public boolean isEnabled() {
+            return true;
+        }
+    },
+    CacheFragment {
+        @Override
+        public boolean isEnabled() {
+            return true;
+        }
     }
 }

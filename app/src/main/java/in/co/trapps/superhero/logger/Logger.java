@@ -12,7 +12,6 @@ import in.co.trapps.superhero.BuildConfig;
 public class Logger {
 
     public static void logD(String tag, ILoggerActivator iLoggerActivator, Object... msg) {
-        // TODO: Print Logs as per Configuration
         if (BuildConfig.DEBUG && iLoggerActivator.isEnabled()) {
             StringBuilder fullMsg = new StringBuilder();
             fullMsg.append(iLoggerActivator);

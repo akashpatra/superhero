@@ -25,6 +25,6 @@ public class CacheFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        view.findViewById(R.id.)
+//        view.findViewById(R.id.)
     }
 }
