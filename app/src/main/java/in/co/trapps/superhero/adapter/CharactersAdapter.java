@@ -14,6 +14,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.List;
 
 import in.co.trapps.superhero.R;
+import in.co.trapps.superhero.activity.MainActivity;
 import in.co.trapps.superhero.model.CharacterModel;
 
 /**
@@ -37,13 +38,22 @@ public class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Vi
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        CharacterModel characterModel = charactersList.get(position);
+        final CharacterModel characterModel = charactersList.get(position);
+
+        holder.tvName.setText(characterModel.getDescription());
 
         Glide.with(mContext).load(characterModel.getThumbnail())
                 .thumbnail(0.5f)
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.ivImage);
+
+        holder.ivImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) mContext).showCharacter(characterModel);
+            }
+        });
     }
 
     @Override
