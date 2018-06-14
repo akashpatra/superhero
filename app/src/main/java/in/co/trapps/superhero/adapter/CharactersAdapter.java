@@ -14,7 +14,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.List;
 
 import in.co.trapps.superhero.R;
-import in.co.trapps.superhero.activity.MainActivity;
 import in.co.trapps.superhero.model.CharacterModel;
 
 /**
@@ -22,8 +21,9 @@ import in.co.trapps.superhero.model.CharacterModel;
  */
 public class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.ViewHolder> {
 
-    private List<CharacterModel> charactersList;
     private Context mContext;
+    private List<CharacterModel> charactersList;
+    private OnAdapterListener onAdapterListener;
 
     public CharactersAdapter(Context context, List<CharacterModel> charactersList) {
         mContext = context;
@@ -48,12 +48,12 @@ public class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Vi
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.ivImage);
 
-        /*holder.ivImage.setOnClickListener(new View.OnClickListener() {
+        holder.ivImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity) mContext).showCharacter(characterModel);
+                onAdapterListener.onItemClick(characterModel);
             }
-        });*/
+        });
     }
 
     @Override
@@ -71,5 +71,13 @@ public class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Vi
             ivImage = itemView.findViewById(R.id.image);
             tvName = itemView.findViewById(R.id.name);
         }
+    }
+
+    public void setOnClickListener(OnAdapterListener listener) {
+        this.onAdapterListener = listener;
+    }
+
+    public interface OnAdapterListener {
+        void onItemClick(CharacterModel characterModel);
     }
 }

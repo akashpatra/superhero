@@ -1,5 +1,6 @@
 package in.co.trapps.superhero.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,8 +16,10 @@ import java.util.List;
 import in.co.trapps.superhero.R;
 import in.co.trapps.superhero.adapter.CharactersAdapter;
 import in.co.trapps.superhero.database.SuperHeroDAO;
+import in.co.trapps.superhero.interfaces.IFragmentInteraction;
 import in.co.trapps.superhero.model.CharacterModel;
 import in.co.trapps.superhero.utils.Constants;
+import in.co.trapps.superhero.utils.Fragments;
 import in.co.trapps.superhero.utils.GridSpacingItemDecoration;
 
 /**
@@ -26,12 +29,14 @@ public class CacheFragment extends Fragment {
 
     public static final int COLUMN_COUNT = 2;
 
-    ViewGroup empty;
-    RecyclerView list;
+    private ViewGroup empty;
+    private RecyclerView list;
 
-    CharactersAdapter adapter;
-    GridLayoutManager gridLayoutManager;
-    GridSpacingItemDecoration gridSpacingItemDecoration;
+    private CharactersAdapter adapter;
+    private GridLayoutManager gridLayoutManager;
+    private GridSpacingItemDecoration gridSpacingItemDecoration;
+
+    private IFragmentInteraction listener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,6 +61,15 @@ public class CacheFragment extends Fragment {
         try {
             List<CharacterModel> charactersList = SuperHeroDAO.with().selectLast5Characters();
             adapter = new CharactersAdapter(getActivity(), charactersList);
+            adapter.setOnClickListener(new CharactersAdapter.OnAdapterListener() {
+                @Override
+                public void onItemClick(CharacterModel characterModel) {
+                    Bundle b = new Bundle();
+                    b.putBoolean(Constants.OPEN_CHARACTER_EXTRA, true);
+                    b.putSerializable(Constants.CHARACTER_EXTRA, characterModel);
+                    listener.onInteraction(Fragments.CACHE_FRAGMENT, b);
+                }
+            });
             list.setAdapter(adapter);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -84,5 +98,21 @@ public class CacheFragment extends Fragment {
     public void initGridSpacingItemDecoration() {
         gridSpacingItemDecoration = new GridSpacingItemDecoration(COLUMN_COUNT,
                 Constants.RECYCLER_VIEW_ITEM_SPACE, true, 1);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof IFragmentInteraction) {
+            listener = (IFragmentInteraction) context;
+        } else {
+            throw new Error("Please implement IFragmentInteraction");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
     }
 }

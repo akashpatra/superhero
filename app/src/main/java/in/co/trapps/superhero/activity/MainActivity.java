@@ -37,13 +37,12 @@ public class MainActivity extends AppCompatActivity implements IFragmentInteract
     public void onInteraction(Fragments fragments, Bundle b) {
         switch (fragments) {
             case SEARCH_FRAGMENT:
+            case CACHE_FRAGMENT:
                 boolean openCharacterExtra = b.getBoolean(Constants.OPEN_CHARACTER_EXTRA);
                 if (openCharacterExtra) {
                     CharacterModel characterModel = (CharacterModel) b.getSerializable(Constants.CHARACTER_EXTRA);
                     showCharacter(characterModel);
                 }
-                break;
-            case CACHE_FRAGMENT:
                 break;
         }
     }
