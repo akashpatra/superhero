@@ -7,13 +7,16 @@ import in.co.trapps.superhero.R;
 import in.co.trapps.superhero.database.SuperHeroDAO;
 import in.co.trapps.superhero.fragments.CacheFragment;
 import in.co.trapps.superhero.fragments.SearchFragment;
+import in.co.trapps.superhero.interfaces.IFragmentInteraction;
 import in.co.trapps.superhero.model.CharacterModel;
+import in.co.trapps.superhero.utils.Constants;
 import in.co.trapps.superhero.utils.FragUtils;
+import in.co.trapps.superhero.utils.Fragments;
 
 /**
  * @author Akash Patra
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IFragmentInteraction {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +29,22 @@ public class MainActivity extends AppCompatActivity {
         FragUtils.addFragment(getSupportFragmentManager(), R.id.cache_fragment, new CacheFragment());
     }
 
-    // TODO: Using interfaces
-    public void showCharacter(CharacterModel character) {
+    private void showCharacter(CharacterModel character) {
         startActivity(CharacterActivity.newIntent(this, character));
+    }
+
+    @Override
+    public void onInteraction(Fragments fragments, Bundle b) {
+        switch (fragments) {
+            case SEARCH_FRAGMENT:
+                boolean openCharacterExtra = b.getBoolean(Constants.OPEN_CHARACTER_EXTRA);
+                if (openCharacterExtra) {
+                    CharacterModel characterModel = (CharacterModel) b.getSerializable(Constants.CHARACTER_EXTRA);
+                    showCharacter(characterModel);
+                }
+                break;
+            case CACHE_FRAGMENT:
+                break;
+        }
     }
 }

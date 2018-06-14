@@ -1,5 +1,6 @@
 package in.co.trapps.superhero.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,8 +12,8 @@ import android.widget.EditText;
 import java.sql.SQLException;
 
 import in.co.trapps.superhero.R;
-import in.co.trapps.superhero.activity.MainActivity;
 import in.co.trapps.superhero.database.SuperHeroDAO;
+import in.co.trapps.superhero.interfaces.IFragmentInteraction;
 import in.co.trapps.superhero.logger.Logger;
 import in.co.trapps.superhero.logger.LoggerEnable;
 import in.co.trapps.superhero.mapper.Mapper;
@@ -21,6 +22,7 @@ import in.co.trapps.superhero.model.CharactersResponse;
 import in.co.trapps.superhero.network.APIController;
 import in.co.trapps.superhero.network.RequestListener;
 import in.co.trapps.superhero.utils.Constants;
+import in.co.trapps.superhero.utils.Fragments;
 import retrofit2.Response;
 
 /**
@@ -30,6 +32,8 @@ public class SearchFragment extends Fragment implements RequestListener<Characte
 
     // For Logging
     private static final LoggerEnable CLASS_NAME = LoggerEnable.SearchFragment;
+
+    private IFragmentInteraction listener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,11 +67,30 @@ public class SearchFragment extends Fragment implements RequestListener<Characte
         }
 
         // Tell Activity to show Character
-        ((MainActivity) getActivity()).showCharacter(characterModel);
+        Bundle b = new Bundle();
+        b.putBoolean(Constants.OPEN_CHARACTER_EXTRA, true);
+        b.putSerializable(Constants.CHARACTER_EXTRA, characterModel);
+        listener.onInteraction(Fragments.SEARCH_FRAGMENT, b);
     }
 
     @Override
     public void onFailure(Throwable t) {
         Logger.logD(Constants.TAG, CLASS_NAME, "Error Occurred");
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof IFragmentInteraction) {
+            listener = (IFragmentInteraction) context;
+        } else {
+            throw new Error("Please implement IFragmentInteraction");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
     }
 }

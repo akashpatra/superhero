@@ -19,7 +19,7 @@ import in.co.trapps.superhero.utils.Constants;
 public class CharacterActivity extends AppCompatActivity {
 
     // For Logging
-    private static final LoggerEnable CLASS_NAME = LoggerEnable.SuperHeroDAO;
+    private static final LoggerEnable CLASS_NAME = LoggerEnable.CharacterActivity;
 
     private static final String ARG_CHARACTER = "characterModel";
 

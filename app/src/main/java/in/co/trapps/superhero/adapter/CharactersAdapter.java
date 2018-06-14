@@ -48,12 +48,12 @@ public class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Vi
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.ivImage);
 
-        holder.ivImage.setOnClickListener(new View.OnClickListener() {
+        /*holder.ivImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ((MainActivity) mContext).showCharacter(characterModel);
             }
-        });
+        });*/
     }
 
     @Override
