@@ -1,5 +1,6 @@
 package in.co.trapps.superhero.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -34,6 +35,7 @@ public class SearchFragment extends Fragment implements RequestListener<Characte
     private static final LoggerEnable CLASS_NAME = LoggerEnable.SearchFragment;
 
     private IFragmentInteraction listener;
+    private ProgressDialog progressDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,10 +51,25 @@ public class SearchFragment extends Fragment implements RequestListener<Characte
             @Override
             public void onClick(View v) {
                 String query = ((EditText) view.findViewById(R.id.character)).getText().toString();
-
+                showProgress();
                 new APIController().loadCharacter(query, SearchFragment.this);
             }
         });
+    }
+
+    public void showProgress() {
+        if (null != progressDialog)
+            progressDialog.dismiss();
+
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setIndeterminate(true);
+        progressDialog.setTitle("Loading data, please wait...");
+        progressDialog.show();
+    }
+
+    public void hideProgress() {
+        if (null != progressDialog)
+            progressDialog.dismiss();
     }
 
     @Override
@@ -65,7 +82,7 @@ public class SearchFragment extends Fragment implements RequestListener<Characte
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        hideProgress();
         // Tell Activity to show Character
         Bundle b = new Bundle();
         b.putBoolean(Constants.OPEN_CHARACTER_EXTRA, true);
@@ -76,6 +93,7 @@ public class SearchFragment extends Fragment implements RequestListener<Characte
     @Override
     public void onFailure(Throwable t) {
         Logger.logD(Constants.TAG, CLASS_NAME, "Error Occurred");
+        hideProgress();
     }
 
     @Override
