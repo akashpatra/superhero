@@ -53,6 +53,6 @@ public class CharacterActivity extends AppCompatActivity {
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(image);
-        Logger.logD(Constants.TAG, CLASS_NAME, "onCreate()");
+        Logger.logD(Constants.TAG, CLASS_NAME, " >> onCreate()");
     }
 }

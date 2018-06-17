@@ -1,4 +1,4 @@
-package in.co.trapps.superhero.fragments;
+package in.co.trapps.superhero.cache;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,13 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import in.co.trapps.superhero.R;
 import in.co.trapps.superhero.adapter.CharactersAdapter;
-import in.co.trapps.superhero.database.SuperHeroDAO;
 import in.co.trapps.superhero.interfaces.IFragmentInteraction;
+import in.co.trapps.superhero.logger.LoggerEnable;
 import in.co.trapps.superhero.model.CharacterModel;
 import in.co.trapps.superhero.utils.Constants;
 import in.co.trapps.superhero.utils.Fragments;
@@ -25,7 +24,10 @@ import in.co.trapps.superhero.utils.GridSpacingItemDecoration;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CacheFragment extends Fragment {
+public class CacheFragment extends Fragment implements CacheContract.View {
+
+    // For Logging
+    private static final LoggerEnable CLASS_NAME = LoggerEnable.CacheFragment;
 
     public static final int COLUMN_COUNT = 2;
 
@@ -37,6 +39,12 @@ public class CacheFragment extends Fragment {
     private GridSpacingItemDecoration gridSpacingItemDecoration;
 
     private IFragmentInteraction listener;
+
+    private CachePresenter presenter;
+
+    public CacheFragment() {
+        presenter = new CachePresenter();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,22 +66,7 @@ public class CacheFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        try {
-            List<CharacterModel> charactersList = SuperHeroDAO.with().selectLast5Characters();
-            adapter = new CharactersAdapter(getActivity(), charactersList);
-            adapter.setOnClickListener(new CharactersAdapter.OnAdapterListener() {
-                @Override
-                public void onItemClick(CharacterModel characterModel) {
-                    Bundle b = new Bundle();
-                    b.putBoolean(Constants.OPEN_CHARACTER_EXTRA, true);
-                    b.putSerializable(Constants.CHARACTER_EXTRA, characterModel);
-                    listener.onInteraction(Fragments.CACHE_FRAGMENT, b);
-                }
-            });
-            list.setAdapter(adapter);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        presenter.queryCachedData();
     }
 
     private void initRecyclerView() {
@@ -108,11 +101,30 @@ public class CacheFragment extends Fragment {
         } else {
             throw new Error("Please implement IFragmentInteraction");
         }
+
+        presenter.bind(this);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         listener = null;
+
+        presenter.unbind();
+    }
+
+    @Override
+    public void showCachedData(List<CharacterModel> charactersList) {
+        adapter = new CharactersAdapter(getActivity(), charactersList);
+        adapter.setOnClickListener(new CharactersAdapter.OnAdapterListener() {
+            @Override
+            public void onItemClick(CharacterModel characterModel) {
+                Bundle b = new Bundle();
+                b.putBoolean(Constants.OPEN_CHARACTER_EXTRA, true);
+                b.putSerializable(Constants.CHARACTER_EXTRA, characterModel);
+                listener.onInteraction(Fragments.CACHE_FRAGMENT, b);
+            }
+        });
+        list.setAdapter(adapter);
     }
 }

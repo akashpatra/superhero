@@ -1,4 +1,4 @@
-package in.co.trapps.superhero.fragments;
+package in.co.trapps.superhero.search;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -10,32 +10,33 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import java.sql.SQLException;
-
 import in.co.trapps.superhero.R;
-import in.co.trapps.superhero.database.SuperHeroDAO;
 import in.co.trapps.superhero.interfaces.IFragmentInteraction;
 import in.co.trapps.superhero.logger.Logger;
 import in.co.trapps.superhero.logger.LoggerEnable;
-import in.co.trapps.superhero.mapper.Mapper;
 import in.co.trapps.superhero.model.CharacterModel;
-import in.co.trapps.superhero.model.CharactersResponse;
-import in.co.trapps.superhero.network.APIController;
-import in.co.trapps.superhero.network.RequestListener;
 import in.co.trapps.superhero.utils.Constants;
 import in.co.trapps.superhero.utils.Fragments;
-import retrofit2.Response;
+
+import static in.co.trapps.superhero.logger.Logger.logD;
 
 /**
  * @author Akash Patra
  */
-public class SearchFragment extends Fragment implements RequestListener<CharactersResponse> {
+public class SearchFragment extends Fragment implements SearchContract.View {
 
     // For Logging
     private static final LoggerEnable CLASS_NAME = LoggerEnable.SearchFragment;
 
     private IFragmentInteraction listener;
     private ProgressDialog progressDialog;
+
+    private SearchPresenter presenter;
+
+    public SearchFragment() {
+        logD(Constants.TAG, CLASS_NAME, " >> SearchFragment");
+        presenter = new SearchPresenter();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,12 +52,12 @@ public class SearchFragment extends Fragment implements RequestListener<Characte
             @Override
             public void onClick(View v) {
                 String query = ((EditText) view.findViewById(R.id.character)).getText().toString();
-                showProgress();
-                new APIController().loadCharacter(query, SearchFragment.this);
+                presenter.doSearch(query);
             }
         });
     }
 
+    @Override
     public void showProgress() {
         if (null != progressDialog)
             progressDialog.dismiss();
@@ -67,48 +68,40 @@ public class SearchFragment extends Fragment implements RequestListener<Characte
         progressDialog.show();
     }
 
+    @Override
     public void hideProgress() {
         if (null != progressDialog)
             progressDialog.dismiss();
     }
 
     @Override
-    public void onSuccess(Response<CharactersResponse> response) {
-        Logger.logD(Constants.TAG, CLASS_NAME, "Response Received");
-        CharacterModel characterModel = Mapper.mapCharacterResponseToCharacter(response.body());
-        // Store Data in Database
-        try {
-            SuperHeroDAO.with().addCharacter(characterModel);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        hideProgress();
+    public void showCharacter(CharacterModel character) {
         // Tell Activity to show Character
         Bundle b = new Bundle();
         b.putBoolean(Constants.OPEN_CHARACTER_EXTRA, true);
-        b.putSerializable(Constants.CHARACTER_EXTRA, characterModel);
+        b.putSerializable(Constants.CHARACTER_EXTRA, character);
         listener.onInteraction(Fragments.SEARCH_FRAGMENT, b);
-    }
-
-    @Override
-    public void onFailure(Throwable t) {
-        Logger.logD(Constants.TAG, CLASS_NAME, "Error Occurred");
-        hideProgress();
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        logD(Constants.TAG, CLASS_NAME, " >> onAttach");
+
         if (context instanceof IFragmentInteraction) {
             listener = (IFragmentInteraction) context;
         } else {
             throw new Error("Please implement IFragmentInteraction");
         }
+
+        presenter.bind(this);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        logD(Constants.TAG, CLASS_NAME, " >> onDetach");
         listener = null;
+        presenter.unbind();
     }
 }
