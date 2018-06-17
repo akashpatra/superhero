@@ -42,5 +42,11 @@ public enum LoggerEnable implements ILoggerActivator {
         public boolean isEnabled() {
             return true;
         }
+    },
+    CachePresenter {
+        @Override
+        public boolean isEnabled() {
+            return true;
+        }
     }
 }

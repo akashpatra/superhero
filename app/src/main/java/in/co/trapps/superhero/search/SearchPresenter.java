@@ -42,7 +42,7 @@ public class SearchPresenter implements SearchContract.Presenter,
 
     @Override
     public void onSuccess(Response<CharactersResponse> response) {
-        Logger.logD(Constants.TAG, CLASS_NAME, "Response Received");
+        Logger.logD(Constants.TAG, CLASS_NAME, " >> Response Received");
         CharacterModel characterModel = Mapper.mapCharacterResponseToCharacter(response.body());
         // Store Data in Database
         try {
@@ -56,7 +56,7 @@ public class SearchPresenter implements SearchContract.Presenter,
 
     @Override
     public void onFailure(Throwable t) {
-        Logger.logD(Constants.TAG, CLASS_NAME, "Error Occurred");
+        Logger.logD(Constants.TAG, CLASS_NAME, " >> Error Occurred");
         view.hideProgress();
     }
 }

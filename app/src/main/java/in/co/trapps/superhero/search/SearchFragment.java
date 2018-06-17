@@ -12,10 +12,13 @@ import android.widget.EditText;
 
 import in.co.trapps.superhero.R;
 import in.co.trapps.superhero.interfaces.IFragmentInteraction;
+import in.co.trapps.superhero.logger.Logger;
 import in.co.trapps.superhero.logger.LoggerEnable;
 import in.co.trapps.superhero.model.CharacterModel;
 import in.co.trapps.superhero.utils.Constants;
 import in.co.trapps.superhero.utils.Fragments;
+
+import static in.co.trapps.superhero.logger.Logger.logD;
 
 /**
  * @author Akash Patra
@@ -31,6 +34,7 @@ public class SearchFragment extends Fragment implements SearchContract.View {
     private SearchPresenter presenter;
 
     public SearchFragment() {
+        logD(Constants.TAG, CLASS_NAME, " >> SearchFragment");
         presenter = new SearchPresenter();
     }
 
@@ -82,6 +86,8 @@ public class SearchFragment extends Fragment implements SearchContract.View {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        logD(Constants.TAG, CLASS_NAME, " >> onAttach");
+
         if (context instanceof IFragmentInteraction) {
             listener = (IFragmentInteraction) context;
         } else {
@@ -94,6 +100,7 @@ public class SearchFragment extends Fragment implements SearchContract.View {
     @Override
     public void onDetach() {
         super.onDetach();
+        logD(Constants.TAG, CLASS_NAME, " >> onDetach");
         listener = null;
         presenter.unbind();
     }
