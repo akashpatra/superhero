@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import in.co.trapps.superhero.R;
 import in.co.trapps.superhero.database.SuperHeroDAO;
 import in.co.trapps.superhero.fragments.CacheFragment;
-import in.co.trapps.superhero.fragments.SearchFragment;
+import in.co.trapps.superhero.search.SearchFragment;
 import in.co.trapps.superhero.interfaces.IFragmentInteraction;
 import in.co.trapps.superhero.model.CharacterModel;
 import in.co.trapps.superhero.utils.Constants;
